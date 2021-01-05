@@ -1,0 +1,63 @@
+FROM ubuntu:18.04
+
+ENV DATAIKU_PORT 11000
+ENV DATAIKU_USER dataiku
+ENV DATAIKU_VERSION 8.0.2
+ENV MAPR_CONTAINER_UID 5000
+ENV MAPR_CONTAINER_GID 5000
+ENV MAPR_CONTAINER_USER mapr
+ENV MAPR_CONTAINER_GROUP mapr
+ENV MAPR_CLDB_HOSTS 10.0.142.58,10.0.172.69,10.0.246.89
+ENV MAPR_CLUSTER my.cluster.com
+ENV MAPR_MOUNT_PATH /mapr
+
+
+LABEL mapr.os=ubuntu18 mapr.version=6.2.0 mapr.mep_version=7.0.0
+
+RUN export DEBIAN_FRONTEND=noninteractive 
+RUN apt-get update 
+RUN apt-get install --no-install-recommends -q -y curl sudo tzdata wget python-minimal gnupg apt-utils dnsutils file iputils-ping net-tools nfs-common openssl syslinux libssl1.0.0 lsb-release openjdk-11-jdk 
+RUN apt-get install -q -y acl git nginx zip unzip python2.7 libpython2.7 libgomp1 python3-distutils
+RUN apt-get autoremove --purge -q -y 
+RUN rm -rf /var/lib/apt/lists/* && apt-get clean -q
+
+ENV JAVA_HOME=/usr/lib/jvm/java-1.11.0-openjdk-amd64/
+
+RUN wget https://package.mapr.com/releases/pub/maprgpg.key && sudo apt-key add ./maprgpg.key
+RUN echo 'deb https://package.mapr.com/releases/v6.2.0/ubuntu binary trusty' >> /etc/apt/sources.list
+RUN echo 'deb https://package.mapr.com/releases/MEP/MEP-7.0.0/ubuntu binary trusty' >> /etc/apt/sources.list
+RUN sudo apt-get update
+
+# Install Mapr_client (hadoop, DB, event...) and Fuse client posix
+ENV LD_LIBRARY_PATH ${JAVA_HOME}/lib/server/:/opt/mapr/lib
+
+RUN apt-get install -y mapr-client 
+
+RUN mkdir $MAPR_MOUNT_PATH
+RUN apt-get install -y fuse
+RUN apt-get install -y mapr-posix-client-basic 
+
+# Dataiku installation  
+RUN useradd -ms /bin/bash $DATAIKU_USER
+
+USER $DATAIKU_USER
+WORKDIR /home/$DATAIKU_USER
+
+RUN wget https://cdn.downloads.dataiku.com/public/dss/8.0.2/dataiku-dss-${DATAIKU_VERSION}.tar.gz && \
+    tar xzf dataiku-dss-${DATAIKU_VERSION}.tar.gz && \ 
+    rm dataiku-dss-${DATAIKU_VERSION}.tar.gz && \
+    rm -rf ${DATAIKU_VERSION}
+    
+RUN dataiku-dss-${DATAIKU_VERSION}/installer.sh -d /home/$DATAIKU_USER/data -p $DATAIKU_PORT
+#ADD license.json /home/$DATAIKU_USER/data/config/license.json 
+
+
+# Launch Dataiku and Posix
+
+USER root
+ADD start.sh /home/$DATAIKU_USER/start.sh
+RUN chmod +x /home/$DATAIKU_USER/start.sh
+
+expose $DATAIKU_PORT
+
+ENTRYPOINT /home/$DATAIKU_USER/start.sh && /bin/bash

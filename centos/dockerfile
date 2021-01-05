@@ -1,0 +1,48 @@
+FROM centos:centos8
+
+ENV container docker
+ENV dataiku_version 6.0.2 
+
+LABEL mapr.os=centos7 mapr.version=6.2.0 mapr.mep_version=7.0.0
+
+ 
+RUN yum install -y \
+	curl  \
+	net-tools  \
+	sudo  \
+	wget  \
+	which  \
+	gnupg2  \
+	initscripts  \
+	syslinux  \
+	openssl  \
+	file  \
+	passwd  \
+	diffutils  \
+	epel-release \
+	redhat-lsb-core 
+	
+
+RUN yum install -y java-1.8.0-openjdk java-11-openjdk-devel 
+ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk/
+    
+RUN yum -q clean all
+
+RUN rpm --import https://package.mapr.com/releases/pub/maprgpg.key
+ADD maprtech.repo /etc/yum.repos.d/maprtech.repo
+
+RUN sudo yum install -y mapr-client 
+
+RUN sudo groupadd -g 5000 mapr && sudo useradd -u 5000 -g 5000 mapr
+RUN /opt/mapr/server/configure.sh -N my.cluster.com -c -C 10.0.142.58:7222 -u mapr -U 5000 -g mapr -G 5000 
+
+
+RUN sudo yum install -y mapr-posix-client-basic 
+RUN /opt/mapr/server/configure.sh -N my.cluster.com -C 10.0.142.58 -Z 10.0.142.58 -c
+
+#ENV LD_LIBRARY_PATH /usr/lib/jvm/java-1.11.0-openjdk/jre/lib/amd64/server/:/opt/mapr/lib
+
+RUN mkdir /mapr
+
+ENTRYPOINT service mapr-posix-client-basic start && /bin/bash
+

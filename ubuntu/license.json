@@ -1,0 +1,30 @@
+{
+  "content": {
+    "licensee": {
+      "firstName": "Pierre",
+      "lastName": "Baudelle",
+      "email": "pierre.baudelle@hpe.com",
+      "company": "HPE"
+    },
+    "instanceId": "ht6jxsea",
+    "licenseKind": "PARTNER_NFR",
+    "licenseId": "m8hXcwQHSbRzOfTV",
+    "properties": {
+      "emittedBy": "cloudadmin (thomas)",
+      "features.engines.spark": "true",
+      "features.apinode": "true",
+      "features.engines.sparkMLLib": "true",
+      "features.automationServer": "true",
+      "projectDescription": "NFR License for HPE",
+      "features.security.ldap": "true",
+      "emittedOn": "20191121",
+      "features.security.hadoopKerberos": "true",
+      "features.security.sso": "true",
+      "features.advancedScenarios": "true"
+    },
+    "expiresOn": "20200921"
+  },
+  "r1Sig": "jjp+k7JavLcJJ271WrBcc1LBRjuU7vQoiktdCYEhzmd/3XdjZkwE8jMaEIoL2jMLt47Md7bVK5CxT3ooGlfZb10GBacD6Sy9LJeNSMA5F84Ebrld8+QSh0FaXgs7aCnuTJTOvPy7iVdeS0Gt2jAVRSD1/yj7MjMswxkzWWeNSTU\u003d",
+  "r1Pub": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDqyiqepcWLOnxAX+nuRvTeapLJ3sAWJ0DCtJjrraYnrTSwbVZJ5Xu5ZPukb99mxq45z3jux6ljlmdMlo0/hRwKLHEIjzK7B+XGSJYBcSfcUEe8ENcHV7ZW5PSpxYWWq2h+aA/xpsA3vvM1DWxdgSUErnY2kaZe2X2nStQHlpwBmwIDAQAB",
+  "r1PubSig": "OG7+Ke0UY+poOjCVj43krxo5uqHZ/Itrh27rIwlRhIzBsWvxjTGThDDaaNhwxTwDCjenX5rdCkYqrauD0ztE2Y7iBDSgO7PkzgVW+KFdRrYM+zsEr7nsGfhgdDVQnCUetD4kOxbaqCl7LDo0DXaT+bZGdiNjyiq3ByslIEA5QQ8\u003d"
+}
